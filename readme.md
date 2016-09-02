@@ -1,4 +1,4 @@
----
+<!-- ---
 title: JavaScript Racer
 type: lab
 duration: "Weekend"
@@ -6,15 +6,7 @@ creator:
     name: Alex White
     city: SF
 competencies: JavaScript, DOM manipulation, CSS, HTML
----
-
-> #### *Guiding Questions When Using This Template*
->
-> - [ ] Are the requirements actionable?
-> - [ ] What will students have to do to prepare for this lab?
-> - [ ] Is this intended to be a group activity? Codealong? Pair programming?
-> - [ ] Can students practice pseudo-coding before beginning?
-> - [ ] Is there a clear deliverable? Have you provided a screenshot for students to reference?
+--- -->
 
 # JavaScript Racer
 
