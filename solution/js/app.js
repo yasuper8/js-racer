@@ -1,105 +1,108 @@
-$(document).ready(function() {
-    setUpGame();
-});
+window.onload = function () {
+  characters = {
+    homer: {
+      div: document.getElementById("homer"),
+      audio: new Audio("media/burp.wav"),
+      name: "Homer Simpson"
+    },
+    peter: {
+      div: document.getElementById("peter"),
+      audio: new Audio("media/laugh.mp3"),
+      name: "Peter Griffin"
+    },
+    chicken: {
+      div: document.getElementById("chicken"),
+      width: document.getElementById("chicken").offsetWidth,
+      audio: new Audio("media/Angry-chicken.mp3")
+    }
+  };
+  startClucking();
+  activateButtons();
+};
 
-function setUpGame(){
-  var game = new Game();
 
-  game.chicken.audio.addEventListener('ended', function() {
+var characters = {};
+
+function startClucking(){
+  // play Audio ad infinitum
+  characters.chicken.audio.addEventListener("ended", function() {
     this.currentTime = 0;
     this.play();
   }, false);
-  game.chicken.audio.play();
-
-  addEventListeners(game);
+  characters.chicken.audio.play();
 };
 
-// initialize objects
-function Game(){
-  this.homer = {
-    $div: $('#homer'),
-    audio: new Audio('media/burp.wav'),
-    name: 'Homer Simpson'
-  };
-  this.peter = {
-    $div: $('#peter'),
-    audio: new Audio('media/laugh.mp3'),
-    name: 'Peter Griffin'
-  };
-  this.chicken = {
-    width: $('#chicken').width(),
-    audio: new Audio('media/Angry-chicken.mp3')
-  };
-};
-
-function addEventListeners(game){
+function activateButtons(){
   //toggle button turns chicken sound on/off
-  $('#audio').click(function() {
-    !game.chicken.audio.paused ? game.chicken.audio.pause() : game.chicken.audio.play();
-  });
-  //click the 'catch it' button to start the game
-  $('#go').click(function(){
-    startGame(game)
-  });
-  //press reset button to reset the game
-  $('#reset').click(reset);
+  document.getElementById("audio").onclick = function() {
+    !characters.chicken.audio.paused ? characters.chicken.audio.pause() : characters.chicken.audio.play();
+  };
+  //click the "catch it" button to start the characters
+  document.getElementById("go").onclick = function(){
+    startGame(characters);
+  };
 };
 
-function startGame(game){
-  var trackWidth = $(document).width() - game.chicken.width;
+function startGame(characters){
+  // start players and chicken on left
+  characters.homer.div.style.left = 0;
+  characters.peter.div.style.left = 0;
+  characters.chicken.div.style.left = 0;
 
-  $('#go').removeClass('infinite');
-  $('img').removeClass('rollIn');
-  $('#chicken').addClass('infinite bounce');
-  $('#chicken').animate({left: trackWidth}, 4000);
+  // stop initial animations
+  document.getElementById("go").className = "";
+  document.getElementsByTagName("img").className = "";
 
-  $(document).keydown(function(key) {
-    //check for winner
-    var positionOne = $(game.homer.$div).position();
-    var positionTwo = $(game.peter.$div).position();
-    if (positionOne.left + $(game.homer.$div).width() >= trackWidth) {
-      setWinState(game.homer);
-    };
-    if (positionTwo.left + $(game.peter.$div).width() >= trackWidth) {
-      setWinState(game.peter);
-    };
+  moveChicken();
 
-    switch(key.which) {
-      case 90: // press z to make homer go
-        game.homer.$div.css('left', positionOne.left + 40 + 'px');
-        break;
-      case 39: // press right arrow to make peter go
-        game.peter.$div.css('left', positionTwo.left + 40 + 'px');
-        break;
-    };
-  });
+  document.onkeydown = function(key) {
+    characters.homer.position = parseInt(characters.homer.div.style.left, 10);
+    characters.peter.position = parseInt(characters.peter.div.style.left, 10);
+    checkWinner();
+    movePlayer(key)
+  };
 };
 
-function reset() {
-    //don't allow reset button to be clicked until chicken animation is done
-  if ($('#chicken').is(':animated')) return false;
-
-  $('.player').css('left', 0);
-  $('#chicken').css('left', '200px');
-  $('#dinner').remove();
-  $('h1').text('Chiggen Chase');
-  $('#go').addClass('infinite');
-  $('img').removeClass('rollIn');
-  $('h1').removeClass('slideInLeft');
-  //to restart css animation - https://css-tricks.com/restart-css-animation/
-  $('.reset-animation').each(function() {
-      void this.offsetWidth;
-  });
-  $('img').addClass('rollIn');
-  $('h1').addClass('slideInLeft');
-  $('#chicken').removeClass('infinite bounce');
-  $('#reset').removeClass('animated infinite pulse');
+function moveChicken(){
+  characters.chicken.position = parseInt(characters.chicken.div.style.left, 10);
+  setInterval(function(){
+    var newVal = characters.chicken.position += 40;
+    if(newVal <= window.innerWidth - characters.chicken.width){
+      characters.chicken.div.style.left = newVal + "px";
+    }
+  }, 100);
 };
 
-function setWinState(player){
-  $(document).off('keydown');
-  $('#container').append('<img id="dinner" src="imgs/winnerwinnerchickendinner.png"></img>');
-  $('h1').text(player.name + ' Wins!!!!');
+function checkWinner(){
+  if (characters.homer.position + characters.homer.div.offsetWidth >= window.innerWidth - 40) {
+    setWinState(characters.homer, characters);
+  };
+  if (characters.peter.position + characters.peter.div.offsetWidth >= window.innerWidth - 40) {
+    setWinState(characters.peter, characters);
+  };
+};
+
+function movePlayer(key) {
+  switch(key.which) {
+    case 90: // press z to make homer go
+      var newHomerPosition = characters.homer.position += 40;
+      characters.homer.div.style.left = newHomerPosition + "px";
+      break;
+    case 39: // press right arrow to make peter go
+      var newPeterPosition = characters.peter.position += 40;
+      characters.peter.div.style.left = newPeterPosition + "px";
+      break;
+  };
+};
+
+function setWinState(player, characters){
+  // stop players from moving
+  document.onkeydown = null;
+  // display winner and win image
+  var img = document.createElement("img");
+  img.setAttribute("id", "dinner");
+  img.src = "imgs/winnerwinnerchickendinner.png";
+  document.getElementById("container").appendChild(img);
+  document.getElementsByTagName("h1")[0].innerText = player.name + " Wins!!!!";
   player.audio.play();
-  $('#reset').addClass('animated infinite pulse');
 }
