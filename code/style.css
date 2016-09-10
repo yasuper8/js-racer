@@ -1,0 +1,28 @@
+#wrapper{
+	position: relative;
+}
+#player1{
+	position: absolute;
+	height: 1em;
+	width: 1em;
+	background-color: blue;
+	top:5em;
+	left: 1em;
+}
+
+#player2{
+	position: absolute;
+	height: 1em;
+	width: 1em;
+	background-color: red;
+	top: 15em;
+	left: 1em;
+}
+
+#goal{
+	position: absolute;
+	height: 20em;
+	width: .3em;
+	background-color: yellow;
+	left: 90%;
+}
