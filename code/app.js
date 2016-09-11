@@ -6,19 +6,19 @@ var player2 = document.getElementById('player2');
 
 // Move blocks forward
 
-var stepsFor1FB = 2;
-var stepsFor2FB = 2;
+var stepsFor1FB = 1;
+var stepsFor2FB = 1;
 var stepsFor1TB = 4;
 var stepsFor2TB = 14;
 
 
 function step(player, steps){
-	player.style.left = steps + "em";
+	player.style.left = steps + "%";
 }
 
 function forward(e){
 	if(e.keyCode == 76){
-		stepsFor1FB +=1;
+		stepsFor1FB += 1;
 	}
 	if(e.keyCode == 65){
 		stepsFor2FB += 1;
@@ -30,15 +30,29 @@ function keyPressedF(e){
 	if(e.keyCode == 76){
 		console.log("L key pressed");	
 		step(player1, stepsFor1FB);
+		checkWin();
 	}  
 	if(e.keyCode == 65){
 		console.log("A key pressed");
 		step(player2, stepsFor2FB);
+		checkWin();
 	}
 }
 
 window.addEventListener("keydown", keyPressedF);
 window.addEventListener("keyup", forward);
+
+
+//Alert the winner
+
+function checkWin(){
+	if(player1.style.left == "90%" && player2.style.left != "90%"){
+		alert("Blue Win!");
+	}
+	if(player2.style.left == "90%" && player1.style.left != "90%"){
+		alert("Red Win!");
+	}
+}
 
 //Move blocks backword
 
@@ -72,17 +86,16 @@ function keyPressedUp(e){
 	}
 }
 
-window.addEventListener("keydown", keyPressedUp);
-
 function toUp(e){
 	if(e.keyCode == 79){
-		stepsFor1TB -=1;
+		stepsFor1TB -= 1;
 	}
 	if(e.keyCode == 81){
 		stepsFor2TB -= 1;
 	}
 }
 
+window.addEventListener("keydown", keyPressedUp);
 window.addEventListener("keyup", toUp);
 
 // Move blocks down
@@ -98,19 +111,54 @@ function keyPressedDown(e){
 	}
 }
 
-window.addEventListener("keydown", keyPressedDown);
-
 function toDown(e){
 	if(e.keyCode == 190){
-		stepsFor1TB +=1;
+		stepsFor1TB += 1;
 	}
 	if(e.keyCode == 88){
 		stepsFor2TB += 1;
 	}
 }
 
+window.addEventListener("keydown", keyPressedDown);
 window.addEventListener("keyup", toDown);
 
+
+//Moving a breen block
+
+
+var green = document.getElementById("object1");
+var greenSteps = 90;
+
+function objSteps(obj, move){
+	obj.style.left = move + "%";
+}
+
+function moveObjLeft(){
+	for(var i = 90; i >= 1; i--){
+		objSteps(green, i);
+	} 
+}
+
+moveObjLeft();
+
+
+//Reset Game
+
+function resetPlayer(){
+	player1.style.left = 1 +"%";
+	player2.style.left = 1 +"%";
+	stepsFor1FB = 1;
+	stepsFor2FB = 1;
+}
+
+
+function keyPressedDown(e){
+	if(e.keyCode == 32){
+		console.log("spacebar is pressed");
+		resetPlayer();
+	}  
+}
 
 
 
